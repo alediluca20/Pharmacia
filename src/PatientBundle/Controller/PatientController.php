@@ -1,7 +1,5 @@
 <?php
-
 namespace PatientBundle\Controller;
-
 use PatientBundle\Entity\Patient;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -23,14 +21,11 @@ class PatientController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
         $patients = $em->getRepository('PatientBundle:Patient')->findAll();
-
         return $this->render('patient/index.html.twig', array(
             'patients' => $patients,
         ));
     }
-
     /**
      * Creates a new patient entity.
      *
@@ -42,21 +37,17 @@ class PatientController extends Controller
         $patient = new Patient();
         $form = $this->createForm('PatientBundle\Form\PatientType', $patient);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($patient);
             $em->flush();
-
             return $this->redirectToRoute('patient_show', array('id' => $patient->getId()));
         }
-
         return $this->render('patient/new.html.twig', array(
             'patient' => $patient,
             'form' => $form->createView(),
         ));
     }
-
     /**
      * Finds and displays a patient entity.
      *
@@ -66,13 +57,11 @@ class PatientController extends Controller
     public function showAction(Patient $patient)
     {
         $deleteForm = $this->createDeleteForm($patient);
-
         return $this->render('patient/show.html.twig', array(
             'patient' => $patient,
             'delete_form' => $deleteForm->createView(),
         ));
     }
-
     /**
      * Displays a form to edit an existing patient entity.
      *
@@ -84,20 +73,16 @@ class PatientController extends Controller
         $deleteForm = $this->createDeleteForm($patient);
         $editForm = $this->createForm('PatientBundle\Form\PatientType', $patient);
         $editForm->handleRequest($request);
-
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-
             return $this->redirectToRoute('patient_edit', array('id' => $patient->getId()));
         }
-
         return $this->render('patient/edit.html.twig', array(
             'patient' => $patient,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
     }
-
     /**
      * Deletes a patient entity.
      *
@@ -108,16 +93,13 @@ class PatientController extends Controller
     {
         $form = $this->createDeleteForm($patient);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($patient);
             $em->flush();
         }
-
         return $this->redirectToRoute('patient_index');
     }
-
     /**
      * Creates a form to delete a patient entity.
      *

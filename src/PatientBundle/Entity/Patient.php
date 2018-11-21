@@ -1,16 +1,15 @@
 <?php
-
 namespace PatientBundle\Entity;
-
 use Doctrine\ORM\Mapping as ORM;
-
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Patient
  *
  * @ORM\Table(name="patient")
  * @ORM\Entity(repositoryClass="PatientBundle\Repository\PatientRepository")
  */
-class Patient
+class Patient implements \JsonSerializable
 {
     /**
      * @var int
@@ -20,50 +19,57 @@ class Patient
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
     /**
      * @var string
-     *
+     *@Assert\NotBlank
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
-
     /**
      * @var string
      *
-     * @ORM\Column(name="lastName", type="string", length=255)
+     * @ORM\Column(name="lastname", type="string", length=255)
      */
     private $lastName;
-
     /**
      * @var int
-     *
+     *@Assert\NotBlank
      * @ORM\Column(name="age", type="integer")
      */
     private $age;
-
     /**
      * @var string
-     *
+     *@Assert\NotBlank
      * @ORM\Column(name="idNumber", type="string", length=255)
      */
     private $idNumber;
-
     /**
      * @var string
-     *
+     *@Assert\NotBlank
      * @ORM\Column(name="idType", type="string", length=255)
      */
     private $idType;
-
     /**
      * @var string
-     *
-     * @ORM\Column(name="observation", type="string", length=255)
+     *@Assert\NotBlank
+     * @ORM\Column(name="observations", type="string", length=255)
      */
     private $observation;
-
-
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Analisis" , inversedBy="patients")
+     * @ORM\JoinTable(name="patient_analisis")
+     */
+    private $analisis=null;
+    public function __construct()
+    {
+        $this->analisis = new ArrayCollection();
+    }
+    public function getAnalisis()
+    {
+        return $this->analisis;
+    }
     /**
      * Get id
      *
@@ -73,7 +79,6 @@ class Patient
     {
         return $this->id;
     }
-
     /**
      * Set name
      *
@@ -84,10 +89,8 @@ class Patient
     public function setName($name)
     {
         $this->name = $name;
-
         return $this;
     }
-
     /**
      * Get name
      *
@@ -97,7 +100,6 @@ class Patient
     {
         return $this->name;
     }
-
     /**
      * Set lastName
      *
@@ -107,11 +109,9 @@ class Patient
      */
     public function setLastName($lastName)
     {
-        $this->lastName = $lastName;
-
+        $this->lastname = $lastName;
         return $this;
     }
-
     /**
      * Get lastName
      *
@@ -121,7 +121,6 @@ class Patient
     {
         return $this->lastName;
     }
-
     /**
      * Set age
      *
@@ -132,10 +131,8 @@ class Patient
     public function setAge($age)
     {
         $this->age = $age;
-
         return $this;
     }
-
     /**
      * Get age
      *
@@ -145,7 +142,6 @@ class Patient
     {
         return $this->age;
     }
-
     /**
      * Set idNumber
      *
@@ -156,10 +152,8 @@ class Patient
     public function setIdNumber($idNumber)
     {
         $this->idNumber = $idNumber;
-
         return $this;
     }
-
     /**
      * Get idNumber
      *
@@ -169,7 +163,6 @@ class Patient
     {
         return $this->idNumber;
     }
-
     /**
      * Set idType
      *
@@ -180,10 +173,8 @@ class Patient
     public function setIdType($idType)
     {
         $this->idType = $idType;
-
         return $this;
     }
-
     /**
      * Get idType
      *
@@ -193,21 +184,18 @@ class Patient
     {
         return $this->idType;
     }
-
     /**
-     * Set observation
+     * Set observations
      *
-     * @param string $observation
+     * @param string $observations
      *
      * @return Patient
      */
     public function setObservation($observation)
     {
         $this->observation = $observation;
-
         return $this;
     }
-
     /**
      * Get observation
      *
@@ -217,5 +205,19 @@ class Patient
     {
         return $this->observation;
     }
+    public function __toString(){
+        return $this->name;
+    }
+    public function jsonSerialize()
+    {
+        return [
+                'id' => $this->getId(),
+                'name' => $this->getName(),
+                'lastName' => $this->getLastName(),
+                'age' => $this->getAge(),
+                'idNumber' => $this->getIdNumber(),
+                'idType' => $this->getIdType(),
+                'observation' =>$this->getObservation()
+                ];
+    }
 }
-
